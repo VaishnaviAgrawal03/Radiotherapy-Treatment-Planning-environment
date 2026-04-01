@@ -1,0 +1,182 @@
+# openenv.yaml
+# OpenEnv specification metadata for RadiotherapyPlanningEnv-v1
+# See: https://github.com/openenv/openenv
+
+name: RadiotherapyPlanningEnv-v1
+version: "1.0.0"
+description: >
+  A Gymnasium-compatible RL environment for cancer radiotherapy treatment planning.
+  An AI agent iteratively places and optimizes radiation beams to maximize tumor
+  dose coverage while protecting surrounding organs-at-risk (OARs).
+  Simulates the real clinical workflow of a radiation oncologist.
+
+authors:
+  - name: "Hackathon Team"
+    email: "team@example.com"
+
+license: MIT
+repository: https://github.com/yourname/radiotherapy-env
+huggingface_space: https://huggingface.co/spaces/yourname/radiotherapy-planning-env
+docker_image: ghcr.io/yourname/radiotherapy-env:latest
+
+# ── Task Definitions ──────────────────────────────────────────────────────────
+tasks:
+  - id: prostate_easy
+    env_id: RadiotherapyEnv-prostate-v1
+    difficulty: easy
+    max_score: 1.0
+    max_episode_steps: 50
+    description: >
+      Prostate cancer treatment planning. Spherical tumor in the pelvis with
+      2 nearby organs-at-risk (rectum, bladder). Clear geometry, achievable
+      for most RL algorithms within 200K training steps.
+    clinical_context: >
+      Prostate cancer is the most common cancer in men. Standard treatment
+      delivers 60–78 Gy to the prostate while keeping rectum dose < 40 Gy
+      and bladder dose < 50 Gy.
+    passing_score: 0.60
+    grader:
+      tumor_coverage_weight: 0.55
+      oar_compliance_weight: 0.40
+      efficiency_weight: 0.05
+
+  - id: head_neck_medium
+    env_id: RadiotherapyEnv-headneck-v1
+    difficulty: medium
+    max_score: 1.0
+    max_episode_steps: 60
+    description: >
+      Head & neck cancer treatment planning. Irregular tumor with 7 critical
+      OARs: spinal cord, brainstem, bilateral parotids, mandible, larynx,
+      esophagus. Requires learning complex dose trade-offs.
+    clinical_context: >
+      Head & neck cancers require simultaneous dose delivery to tumor while
+      sparing 7+ adjacent critical structures. One of the most complex planning
+      challenges in clinical radiotherapy.
+    passing_score: 0.55
+    grader:
+      tumor_coverage_weight: 0.50
+      oar_compliance_weight: 0.45
+      efficiency_weight: 0.05
+
+  - id: pediatric_brain_hard
+    env_id: RadiotherapyEnv-pediatricbrain-v1
+    difficulty: hard
+    max_score: 1.0
+    max_episode_steps: 70
+    description: >
+      Pediatric brain tumor adjacent to the brainstem (2-3 voxels separation).
+      Maximum precision required — any brainstem overdose triggers a catastrophic
+      penalty. The hardest planning scenario in clinical practice.
+    clinical_context: >
+      Pediatric brain tumors near the brainstem are the most challenging cases
+      in radiation oncology. Children are especially sensitive to radiation
+      side effects. Any brainstem dose > 54 Gy risks permanent neurological damage.
+    passing_score: 0.50
+    grader:
+      tumor_coverage_weight: 0.50
+      oar_compliance_weight: 0.48
+      efficiency_weight: 0.02
+
+# ── Spaces ────────────────────────────────────────────────────────────────────
+action_space:
+  type: Discrete
+  n: 8
+  actions:
+    0: "Add beam at next default angle"
+    1: "Rotate last beam +10 degrees"
+    2: "Rotate last beam -10 degrees"
+    3: "Increase last beam dose weight by 10%"
+    4: "Decrease last beam dose weight by 10%"
+    5: "Remove last beam"
+    6: "Fine-tune all beams (small random perturbation)"
+    7: "Lock plan (terminate episode)"
+
+observation_space:
+  type: Dict
+  spaces:
+    dvh_tumor:
+      type: Box
+      shape: [50]
+      dtype: float32
+      description: "Cumulative DVH for tumor, normalized to prescription dose"
+    dvh_oar:
+      type: Box
+      shape: [3, 50]
+      dtype: float32
+      description: "Cumulative DVH for top 3 OARs, normalized to dose limits"
+    beams:
+      type: Box
+      shape: [7, 3]
+      dtype: float32
+      description: "Beam config: [angle/180, dose_weight, is_active] per beam slot"
+    constraints:
+      type: Box
+      shape: [4]
+      dtype: float32
+      description: "Normalized constraint violations: [tumor_uncoverage, oar1, oar2, oar3]"
+    step_frac:
+      type: Box
+      shape: [1]
+      dtype: float32
+      description: "Fraction of max_steps elapsed [0, 1]"
+
+# ── Reward ────────────────────────────────────────────────────────────────────
+reward:
+  range: [0.0, 1.0]
+  type: dense
+  description: >
+    Per-step partial reward (dense signal):
+    reward = tumor_coverage * 0.50 - oar_penalty * 0.40 + plan_efficiency * 0.10
+  components:
+    tumor_coverage:
+      weight: 0.50
+      description: "Fraction of tumor receiving >= 95% of prescription dose"
+    oar_penalty:
+      weight: 0.40
+      description: "Weighted sum of OAR dose constraint violations (priority-weighted)"
+    plan_efficiency:
+      weight: 0.10
+      description: "Penalizes too few or too many beams; rewards clean 5-7 beam plans"
+
+# ── Baseline Results ──────────────────────────────────────────────────────────
+baseline:
+  algorithm: PPO (stable-baselines3, MultiInputPolicy)
+  training_steps:
+    prostate: 200000
+    head_neck: 350000
+    pediatric_brain: 1000000
+  scores:
+    prostate:
+      mean: 0.697
+      std: 0.054
+      pass_rate: 1.0
+    head_neck:
+      mean: 0.750
+      std: 0.059
+      pass_rate: 0.967
+    pediatric_brain:
+      mean: 0.717
+      std: 0.090
+      pass_rate: 0.95
+  
+# ── Setup ─────────────────────────────────────────────────────────────────────
+installation:
+  pip: "pip install radiotherapy-env"
+  docker: "docker pull ghcr.io/yourname/radiotherapy-env:latest"
+
+quick_start: |
+  import gymnasium as gym
+  import radiotherapy_env
+
+  env = gym.make("RadiotherapyEnv-prostate-v1", render_mode="rgb_array")
+  obs, info = env.reset(seed=42)
+
+  for _ in range(50):
+      action = env.action_space.sample()
+      obs, reward, terminated, truncated, info = env.step(action)
+      if terminated or truncated:
+          break
+
+  print(f"Final score: {info['score']:.3f}")
+  env.close()

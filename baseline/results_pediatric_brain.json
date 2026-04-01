@@ -1,0 +1,33 @@
+{
+  "task": "pediatric_brain",
+  "env_id": "RadiotherapyEnv-pediatricbrain-v1",
+  "timesteps": 1000000,
+  "train_time_sec": 1339.1,
+  "mean_score": 0.7174,
+  "std_score": 0.0903,
+  "min_score": 0.3796,
+  "max_score": 0.8237,
+  "pass_rate": 0.95,
+  "scores": [
+    0.7516,
+    0.6537,
+    0.76,
+    0.7998,
+    0.7028,
+    0.6729,
+    0.6434,
+    0.3796,
+    0.7404,
+    0.6819,
+    0.7787,
+    0.8237,
+    0.7785,
+    0.7392,
+    0.7529,
+    0.7503,
+    0.6984,
+    0.7198,
+    0.76,
+    0.76
+  ]
+}
