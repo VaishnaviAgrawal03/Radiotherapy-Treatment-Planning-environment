@@ -1,3 +1,18 @@
+---
+title: Radiotherapy Dose Planning
+emoji: 🎯
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+pinned: false
+tags:
+  - openenv
+  - reinforcement-learning
+  - radiotherapy
+  - gymnasium
+---
+
 # 🎯 RadiotherapyPlanningEnv-v1
 
 > **An OpenEnv-compatible RL environment for cancer radiotherapy treatment planning.**
