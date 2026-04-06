@@ -59,4 +59,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     env = gym.make('RadiotherapyEnv-prostate-v1'); env.reset(); env.close(); print('OK')"
 
 # ── Default command: run Gradio demo ─────────────────────────────────────────
-CMD ["python", "app/app.py"]
+CMD ["python", "server.py"]
