@@ -153,7 +153,7 @@ def health():
 
 @app.get("/")
 def root():
-    return RedirectResponse(url="/ui")
+    return RedirectResponse(url="/ui/")
 
 
 # ── Gradio UI (mounted at "/") ────────────────────────────────────────────────
