@@ -89,6 +89,30 @@ reward = tumor_coverage × 0.50
 - **Partial credit** — each improvement earns positive feedback
 - **Range**: `[0.0, 1.0]`
 
+---
+
+## Quick Start
+
+```python
+import gymnasium as gym
+import radiotherapy_env
+
+# Easy task
+env = gym.make("RadiotherapyEnv-prostate-v1", render_mode="rgb_array")
+obs, info = env.reset(seed=42)
+
+for _ in range(50):
+    action = env.action_space.sample()
+    obs, reward, terminated, truncated, info = env.step(action)
+    if terminated or truncated:
+        break
+
+print(f"Final score: {info['score']:.3f}")
+env.close()
+```
+
+---
+
 ### state() API (OpenEnv spec)
 
 ```python
