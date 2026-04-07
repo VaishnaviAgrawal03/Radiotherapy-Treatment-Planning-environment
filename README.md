@@ -212,7 +212,8 @@ radiotherapy-env/
 │       └── dose_heatmap.py     ← Dose heatmap + DVH renderer
 ├── baseline/
 │   ├── train_ppo.py            ← PPO training script
-│   └── evaluate.py             ← Reproducible evaluation
+│   ├── evaluate.py             ← Reproducible evaluation
+│   └── models/                 ← Pre-trained PPO models (all 3 tasks)
 ├── tests/
 │   └── test_env.py             ← Full test suite
 ├── app/
