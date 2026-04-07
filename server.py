@@ -1,16 +1,15 @@
 """
 server.py — RadiotherapyPlanningEnv-v1 HuggingFace Space Entry Point
-=====================================================================
-Runs a FastAPI server that exposes:
-  POST /reset   — reset the environment (required by OpenEnv spec & pre-validation)
-  POST /step    — take an action
-  GET  /state   — get current full state
 
-The Gradio interactive demo is mounted at the root path ("/").
+FastAPI server exposing:
+  POST /reset
+  POST /step
+  GET  /state
+  GET  /health
 
-Start:
+Run:
     python server.py
-    # or via uvicorn directly:
+    or
     uvicorn server:app --host 0.0.0.0 --port 7860
 """
 
@@ -18,15 +17,14 @@ import os
 import sys
 import numpy as np
 import gymnasium as gym
-import gradio as gr
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any, Dict, Optional
 
-import radiotherapy_env  # noqa: F401 — registers gym envs
+import radiotherapy_env  # registers gym envs
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +35,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# ── Global environment state (single-session demo) ────────────────────────────
+# ── Global environment state ──────────────────────────────────────────────────
 _env: Optional[gym.Env] = None
 _last_obs: Optional[Dict] = None
 _last_info: Optional[Dict] = None
@@ -45,14 +43,13 @@ _last_info: Optional[Dict] = None
 DEFAULT_ENV_ID = "RadiotherapyEnv-prostate-v1"
 
 TASK_MAP = {
-    "prostate":        "RadiotherapyEnv-prostate-v1",
-    "head_neck":       "RadiotherapyEnv-headneck-v1",
+    "prostate": "RadiotherapyEnv-prostate-v1",
+    "head_neck": "RadiotherapyEnv-headneck-v1",
     "pediatric_brain": "RadiotherapyEnv-pediatricbrain-v1",
 }
 
-
+# ── Helpers ───────────────────────────────────────────────────────────────────
 def _numpy_to_python(obj: Any) -> Any:
-    """Recursively convert numpy types to plain Python for JSON serialization."""
     if isinstance(obj, np.ndarray):
         return obj.tolist()
     if isinstance(obj, (np.float32, np.float64)):
@@ -65,24 +62,29 @@ def _numpy_to_python(obj: Any) -> Any:
         return [_numpy_to_python(v) for v in obj]
     return obj
 
-
-# ── Request / response models ─────────────────────────────────────────────────
-
+# ── Request Models ────────────────────────────────────────────────────────────
 class ResetRequest(BaseModel):
     task: str = "prostate"
     seed: int = 42
 
-
 class StepRequest(BaseModel):
     action: int
 
-
-# ── REST endpoints ────────────────────────────────────────────────────────────
+# ── API Endpoints ─────────────────────────────────────────────────────────────
 
 @app.post("/reset")
-def api_reset(body: ResetRequest = ResetRequest()):
-    """Reset the environment. Returns initial observation and info."""
+async def api_reset(request: Request):
     global _env, _last_obs, _last_info
+
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+
+    body = ResetRequest(
+        task=data.get("task", "prostate"),
+        seed=data.get("seed", 42),
+    )
 
     env_id = TASK_MAP.get(body.task, DEFAULT_ENV_ID)
 
@@ -94,6 +96,7 @@ def api_reset(body: ResetRequest = ResetRequest()):
 
     _env = gym.make(env_id)
     obs, info = _env.reset(seed=body.seed)
+
     _last_obs = obs
     _last_info = info
 
@@ -107,16 +110,22 @@ def api_reset(body: ResetRequest = ResetRequest()):
 
 @app.post("/step")
 def api_step(body: StepRequest):
-    """Take one action. Returns observation, reward, done flags, and info."""
     global _env, _last_obs, _last_info
 
     if _env is None:
-        return JSONResponse(status_code=400, content={"error": "Environment not initialized. Call /reset first."})
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Call /reset first."}
+        )
 
     if not (0 <= body.action <= 7):
-        return JSONResponse(status_code=400, content={"error": f"Invalid action {body.action}. Must be 0-7."})
+        return JSONResponse(
+            status_code=400,
+            content={"error": f"Invalid action {body.action}. Must be 0-7."}
+        )
 
     obs, reward, terminated, truncated, info = _env.step(body.action)
+
     _last_obs = obs
     _last_info = info
 
@@ -132,41 +141,33 @@ def api_step(body: StepRequest):
 
 @app.get("/state")
 def api_state():
-    """Return current full environment state."""
     global _env
 
     if _env is None:
-        return JSONResponse(status_code=400, content={"error": "Environment not initialized. Call /reset first."})
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Call /reset first."}
+        )
 
     try:
         state = _env.unwrapped.state()
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )
 
     return JSONResponse(content={"state": _numpy_to_python(state)})
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "env": "RadiotherapyPlanningEnv-v1"}
-
-# ── Gradio UI (mounted at "/ui") ──────────────────────────────────────────────
-# Mounting at "/ui" (not "/") so that POST /reset, /step, GET /state are not
-# intercepted by Gradio's catch-all routing.
-
-try:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "app"))
-    from app import demo  # the gr.Blocks() instance
-    app = gr.mount_gradio_app(app, demo, path="/")
-    print("Gradio UI mounted at /ui", flush=True)
-except Exception as e:
-    print(f"[WARN] Could not mount Gradio UI: {e}", flush=True)
+    return {"status": "ok"}
 
 
-# ── Entry point ───────────────────────────────────────────────────────────────
+# ── Entry Point ───────────────────────────────────────────────────────────────
 def main():
-    port = int(os.getenv("PORT", 7860))
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=7860)
 
 
 if __name__ == "__main__":
