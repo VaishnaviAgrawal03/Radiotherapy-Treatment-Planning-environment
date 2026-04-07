@@ -80,8 +80,10 @@ class StepRequest(BaseModel):
 # ── REST endpoints ────────────────────────────────────────────────────────────
 
 @app.post("/reset")
-def api_reset(body: ResetRequest = ResetRequest()):
+async def api_reset(body: Optional[ResetRequest] = None):
     """Reset the environment. Returns initial observation and info."""
+    if body is None:
+        body = ResetRequest()
     global _env, _last_obs, _last_info
 
     env_id = TASK_MAP.get(body.task, DEFAULT_ENV_ID)
