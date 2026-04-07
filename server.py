@@ -22,7 +22,7 @@ import gradio as gr
 import uvicorn
 
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any, Dict, Optional
 
@@ -150,18 +150,12 @@ def api_state():
 def health():
     return {"status": "ok", "env": "RadiotherapyPlanningEnv-v1"}
 
-
-@app.get("/")
-def root():
-    return RedirectResponse(url="/ui/")
-
-
 # ── Gradio UI (mounted at "/") ────────────────────────────────────────────────
 # Import the Gradio demo from app/app.py
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "app"))
     from app import demo  # the gr.Blocks() instance
-    app = gr.mount_gradio_app(app, demo, path="/ui")
+    app = gr.mount_gradio_app(app, demo, path="/")
     print("Gradio UI mounted at /", flush=True)
 except Exception as e:
     print(f"[WARN] Could not mount Gradio UI: {e}", flush=True)
