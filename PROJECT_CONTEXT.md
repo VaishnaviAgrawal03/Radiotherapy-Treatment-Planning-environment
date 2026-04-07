@@ -305,7 +305,7 @@ grade_all(agent_fn, n_episodes=20, seed=42) -> dict
 
 - `import radiotherapy_env` is at module level (triggers gym registration on import)
 - Each episode uses seed+ep for diverse evaluation
-- Pass rate threshold: score ≥ 0.60
+- Pass rate threshold: task-dependent (0.60 / 0.55 / 0.50)
 - Returns: mean, std, min, max, pass_rate, scores list
 - `grade_all()` aggregates three tasks arithmetically
 
@@ -428,7 +428,7 @@ pytest tests/ -v
 - Port: 7860 (Gradio default)
 - Env: `MPLBACKEND=Agg` (headless matplotlib)
 - Healthcheck: creates env, resets, closes
-- Default CMD: `python app/app.py`
+- Default CMD: `python server.py`
 
 ### DEPLOY.sh (11-step guide)
 
