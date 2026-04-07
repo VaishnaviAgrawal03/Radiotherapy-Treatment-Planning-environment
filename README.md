@@ -22,7 +22,13 @@ Built for the **Meta x Scaler PyTorch OpenEnv Hackathon**.
 
 - **Live Demo**: [HuggingFace Space](https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Treatment-Planning-environment)
 - **Repository**: [GitHub](https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment)
-
+  
+The demo lets you:
+- **Watch the agent** plan a treatment automatically
+- **Play yourself** — step through actions manually
+- See the live dose heatmap + DVH curves
+- Compare your score to the baseline agent
+  
 ---
 
 ## Clinical Motivation
@@ -61,15 +67,15 @@ Built for the **Meta x Scaler PyTorch OpenEnv Hackathon**.
 
 ### Observation Space: `Dict`
 
-```python
-{
-    "dvh_tumor":   Box(50,),    # Dose-Volume Histogram for tumor
-    "dvh_oar":     Box(3, 50),  # DVH for top 3 OARs
-    "beams":       Box(7, 3),   # [angle/180, dose_weight, is_active] per beam
-    "constraints": Box(4,),     # Normalized constraint violations
-    "step_frac":   Box(1,),     # Fraction of max_steps used
-}
-```
+| Key | Shape | Description |
+|-----|-------|-------------|
+| `dvh_tumor` | `Box(50,)` | Cumulative Dose-Volume Histogram for tumor |
+| `dvh_oar` | `Box(3, 50)` | DVH for top 3 organs-at-risk |
+| `beams` | `Box(7, 3)` | Per-beam: `[angle/180, dose_weight, is_active]` |
+| `constraints` | `Box(4,)` | Normalized constraint violations `[tumor, oar1, oar2, oar3]` |
+| `step_frac` | `Box(1,)` | Episode progress fraction `[0, 1]` |
+
+All observations normalized to `[0, 1]` for neural network training stability.
 
 ### Reward Function
 
@@ -119,13 +125,12 @@ python baseline/evaluate.py
 
 ### Baseline Results (PPO, stable-baselines3)
 
-| Task | Mean Score | Std | Pass Rate |
-|------|-----------|-----|-----------|
-| Prostate (easy) | 0.71 | ±0.09 | 82% |
-| Head & Neck (medium) | 0.58 | ±0.11 | 64% |
-| Pediatric Brain (hard) | 0.47 | ±0.13 | 41% |
-
----
+| Task | Mean Score | Std | Pass Rate | Training Steps |
+|------|-----------|-----|-----------|---------------|
+| Prostate | 0.697 | 0.054 | 100% | 200K |
+| Head & Neck | 0.750 | 0.059 | 96.7% | 350K |
+| Pediatric Brain | 0.717 | 0.090 | 95.0% | 1M |
+| **Aggregate** | **0.721** | — | — | — |
 
 ## Run Tests
 
@@ -159,20 +164,6 @@ docker run radiotherapy-env:latest pytest tests/ -v
 docker run radiotherapy-env:latest \
     python baseline/train_ppo.py --task prostate
 ```
-
----
-
-## Live Demo
-
-🤗 [Try it on HuggingFace Spaces](https://huggingface.co/spaces/yourname/radiotherapy-planning-env)
-
-The Gradio demo lets you:
-- **Watch the agent** plan a treatment automatically
-- **Play yourself** — step through actions manually
-- See the live dose heatmap + DVH curves
-- Compare your score to the baseline agent
-
----
 
 ## Project Structure
 
@@ -219,4 +210,6 @@ radiotherapy-env/
 
 ---
 
-*Built with ❤️ for the Meta × Scaler PyTorch OpenEnv Hackathon*
+## Author
+
+**Vaishnavi Agrawal** — vagrawal_be22@thapar.edu
