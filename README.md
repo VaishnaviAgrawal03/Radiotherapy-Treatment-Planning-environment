@@ -200,7 +200,7 @@ results = grade_all(my_agent, n_episodes=20, seed=42)
 print(f"Aggregate: {results['aggregate_score']:.3f}")
 ```
 
-Each grader produces scores in `[0.0, 1.0]`, deterministic with seed, pass threshold at 0.60.
+Each grader produces scores in `[0.0, 1.0]`, deterministic with seed, pass thresholds vary by task (0.60 / 0.55 / 0.50).
 
 ---
 
