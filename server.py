@@ -18,7 +18,6 @@ import os
 import sys
 import numpy as np
 import gymnasium as gym
-import gradio as gr
 import uvicorn
 
 from fastapi import FastAPI
@@ -150,17 +149,9 @@ def api_state():
 def health():
     return {"status": "ok", "env": "RadiotherapyPlanningEnv-v1"}
 
-# ── Gradio UI (mounted at "/ui") ──────────────────────────────────────────────
-# Mounting at "/ui" (not "/") so that POST /reset, /step, GET /state are not
-# intercepted by Gradio's catch-all routing.
-
-try:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "app"))
-    from app import demo  # the gr.Blocks() instance
-    app = gr.mount_gradio_app(app, demo, path="/")
-    print("Gradio UI mounted at /ui", flush=True)
-except Exception as e:
-    print(f"[WARN] Could not mount Gradio UI: {e}", flush=True)
+@app.get("/")
+def root():
+    return {"status": "ok", "env": "RadiotherapyPlanningEnv-v1"}
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
