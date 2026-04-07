@@ -12,16 +12,13 @@ tags:
   - radiotherapy
   - gymnasium
 ---
-
-# 🎯 RadiotherapyPlanningEnv-v1
+# RadiotherapyPlanningEnv — OpenEnv RL Environment
 
 > **An OpenEnv-compatible RL environment for cancer radiotherapy treatment planning.**
 
-Every year, **14 million cancer patients** need radiotherapy. A human radiation oncologist spends **2–4 hours** manually optimizing beam angles and doses per patient — trying to maximize radiation to the tumor while protecting nearby organs (heart, spinal cord, lungs).
+An RL environment where an AI agent learns to plan cancer radiotherapy treatment. The agent places radiation beams to maximize tumor dose while protecting surrounding organs-at-risk (OARs) — a real clinical problem that takes human experts **2-4 hours per patient**.
 
-This environment teaches an RL agent to do the same thing.
-
-The agent learns, through trial and error across thousands of simulated patients, which beam configurations deliver the best clinical outcome: **destroy the tumor, protect the organs**.
+Built for the **Meta x Scaler PyTorch OpenEnv Hackathon**.
 
 - **Live Demo**: [HuggingFace Space](https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Treatment-Planning-environment)
 - **Repository**: [GitHub](https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment)
@@ -43,11 +40,11 @@ The agent learns, through trial and error across thousands of simulated patients
 
 ### Three Difficulty Levels
 
-| Task | Env ID | Difficulty | OARs | Max Steps | Pass Score |
-|------|--------|------------|------|-----------|------------|
-| Prostate | `RadiotherapyEnv-prostate-v1` | Easy | 2 | 50 | ≥ 0.60 |
-| Head & Neck | `RadiotherapyEnv-headneck-v1` | Medium | 7 | 60 | ≥ 0.55 |
-| Pediatric Brain | `RadiotherapyEnv-pediatricbrain-v1` | Hard | 5 | 70 | ≥ 0.50 |
+| Task | Env ID | Difficulty | OARs | Max Steps | Pass Score | Clinical Context |
+|------|--------|------------|------|-----------|------------|-----------------|
+| Prostate | `RadiotherapyEnv-prostate-v1` | Easy | 2 | 50 | ≥ 0.60 | Clear geometry, well-separated organs |
+| Head & Neck | `RadiotherapyEnv-headneck-v1` | Medium | 7 | 60 | ≥ 0.55 | Complex anatomy, many competing constraints |
+| Pediatric Brain | `RadiotherapyEnv-pediatricbrain-v1` | Hard | 5 | 70 | ≥ 0.50 | Near-zero margin for error, catastrophic brainstem penalty |
 
 ### Action Space: `Discrete(8)`
 
