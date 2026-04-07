@@ -93,7 +93,9 @@ reward = tumor_coverage × 0.50
 
 ## Quick Start
 
-```python
+```bash
+pip install radiotherapy-env
+
 import gymnasium as gym
 import radiotherapy_env
 
