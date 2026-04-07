@@ -21,7 +21,7 @@ import gymnasium as gym
 import gradio as gr
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any, Dict, Optional
@@ -80,9 +80,18 @@ class StepRequest(BaseModel):
 # ── REST endpoints ────────────────────────────────────────────────────────────
 
 @app.post("/reset")
-def api_reset(body: ResetRequest = ResetRequest()):
+async def api_reset(request: Request):
     """Reset the environment. Returns initial observation and info."""
     global _env, _last_obs, _last_info
+
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+    body = ResetRequest(
+        task=data.get("task", "prostate"),
+        seed=data.get("seed", 42),
+    )
 
     env_id = TASK_MAP.get(body.task, DEFAULT_ENV_ID)
 
@@ -157,7 +166,7 @@ def health():
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "app"))
     from app import demo  # the gr.Blocks() instance
-    app = gr.mount_gradio_app(app, demo, path="/")
+    app = gr.mount_gradio_app(app, demo, path="/ui")
     print("Gradio UI mounted at /ui", flush=True)
 except Exception as e:
     print(f"[WARN] Could not mount Gradio UI: {e}", flush=True)
