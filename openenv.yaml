@@ -2,7 +2,7 @@
 # OpenEnv specification metadata for RadiotherapyPlanningEnv-v1
 # See: https://github.com/openenv/openenv
 
-name: RadiotherapyPlanningEnv-v1
+.
 version: "1.0.0"
 description: >
   A Gymnasium-compatible RL environment for cancer radiotherapy treatment planning.
@@ -17,7 +17,6 @@ authors:
 
 repository: https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment
 huggingface_space: https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Treatment-Planning-environment
-docker_image: ghcr.io/vaishnaviagrawal03/radiotherapy-env:latest
 
 # ── Task Definitions ──────────────────────────────────────────────────────────
 tasks:
