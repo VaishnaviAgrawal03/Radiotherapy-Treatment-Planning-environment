@@ -169,6 +169,30 @@ python baseline/train_ppo.py --all
 # Evaluate
 python baseline/evaluate.py
 ```
+---
+
+## Running the Inference Script
+
+The inference script connects an LLM to the environment via OpenAI-compatible API:
+
+```bash
+export API_BASE_URL="https://api.groq.com/openai/v1"
+export MODEL_NAME="llama-3.3-70b-versatile"
+export API_KEY="your_api_key"
+python inference.py
+```
+
+Output follows the required `[START]`, `[STEP]`, `[END]` format:
+
+```
+[START] task=prostate env=RadiotherapyEnv-prostate-v1 model=llama-3.3-70b-versatile
+[STEP] step=1 action=add_beam reward=0.03 done=false error=null
+[STEP] step=2 action=add_beam reward=0.07 done=false error=null
+...
+[END] success=true steps=50 score=0.635 rewards=0.03,0.07,...
+```
+
+---
 
 ### Baseline Results (PPO, stable-baselines3)
 
