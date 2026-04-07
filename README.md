@@ -16,16 +16,6 @@ tags:
 # 🎯 RadiotherapyPlanningEnv-v1
 
 > **An OpenEnv-compatible RL environment for cancer radiotherapy treatment planning.**
-> Built for the Meta × Scaler PyTorch OpenEnv Hackathon.
-
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)
-[![Gymnasium](https://img.shields.io/badge/gymnasium-0.29+-green.svg)](https://gymnasium.farama.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![HuggingFace Space](https://img.shields.io/badge/🤗-Live%20Demo-orange)](https://huggingface.co/spaces/yourname/radiotherapy-planning-env)
-
----
-
-## What is this?
 
 Every year, **14 million cancer patients** need radiotherapy. A human radiation oncologist spends **2–4 hours** manually optimizing beam angles and doses per patient — trying to maximize radiation to the tumor while protecting nearby organs (heart, spinal cord, lungs).
 
@@ -33,33 +23,19 @@ This environment teaches an RL agent to do the same thing.
 
 The agent learns, through trial and error across thousands of simulated patients, which beam configurations deliver the best clinical outcome: **destroy the tumor, protect the organs**.
 
+- **Live Demo**: [HuggingFace Space](https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Treatment-Planning-environment)
+- **Repository**: [GitHub](https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment)
+
 ---
 
-## Quick Start
+## Clinical Motivation
 
-```bash
-pip install radiotherapy-env
-```
+~14 million cancer patients per year require radiotherapy. A radiation oncologist must decide:
+- How many beams to use
+- At what angles
+- With what dose intensity
 
-```python
-import gymnasium as gym
-import radiotherapy_env
-
-# Task 1: Easy (prostate)
-env = gym.make("RadiotherapyEnv-prostate-v1", render_mode="rgb_array")
-obs, info = env.reset(seed=42)
-
-for step in range(50):
-    action = env.action_space.sample()          # replace with your agent
-    obs, reward, terminated, truncated, info = env.step(action)
-    frame = env.render()                         # RGB dose heatmap
-
-    if terminated or truncated:
-        print(f"Done! Final score: {info['score']:.3f}")
-        break
-
-env.close()
-```
+...while ensuring the tumor receives enough radiation and nearby healthy organs stay below safe limits. This environment simulates that decision-making process for RL agents.
 
 ---
 
@@ -243,12 +219,6 @@ radiotherapy-env/
 | Patients/year | 14 million | 14 million |
 | Time saved/year | — | ~28 million hours |
 | Accessibility | Specialist required | Any hospital |
-
----
-
-## License
-
-MIT License — see [LICENSE](LICENSE)
 
 ---
 

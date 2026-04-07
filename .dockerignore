@@ -1,0 +1,12 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.git/
+*.egg-info/
+dist/
+build/
+baseline/models/
+baseline/logs/
+.pytest_cache/
+node_modules/

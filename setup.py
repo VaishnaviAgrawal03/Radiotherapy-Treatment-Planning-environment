@@ -6,12 +6,12 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name="radiotherapy-env",
     version="1.0.0",
-    author="Your Name",
-    author_email="you@example.com",
+    author="Vaishnavi Agrawal",
+    author_email="vagrawal_be22@thapar.edu",
     description="OpenEnv RL environment for radiotherapy treatment planning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourname/radiotherapy-env",
+    url="https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment",
     packages=find_packages(),
     python_requires=">=3.9",
     install_requires=[

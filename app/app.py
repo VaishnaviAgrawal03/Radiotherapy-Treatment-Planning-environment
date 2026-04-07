@@ -194,18 +194,10 @@ def run_agent(task_name: str, seed: int = 42):
         f"{'─'*55}",
     ]
 
-    consecutive_add = 0
     while not done and step < 70:
         if model is not None:
             raw_action, _ = model.predict(obs, deterministic=True)
             action = int(raw_action)
-            if action == 0:
-                consecutive_add += 1
-            else:
-                consecutive_add = 0
-            # Fall back to heuristic if PPO is stuck adding beams
-            if consecutive_add > 7:
-                action = heuristic_action(obs, step)
         else:
             action = heuristic_action(obs, step)
 
@@ -452,10 +444,7 @@ BENCHMARK_MD = """
 > Score ≥ 0.6 = clinically acceptable plan. Pediatric Brain is the hardest case in clinical radiotherapy.
 """
 
-with gr.Blocks(
-    title="RadiotherapyPlanningEnv",
-    theme=gr.themes.Default(primary_hue=gr.themes.colors.red),
-) as demo:
+with gr.Blocks(title="RadiotherapyPlanningEnv") as demo:
 
     gr.Markdown(DESCRIPTION)
 

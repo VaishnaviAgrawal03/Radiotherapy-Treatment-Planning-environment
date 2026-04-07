@@ -17,7 +17,7 @@ authors:
 
 repository: https://github.com/VaishnaviAgrawal03/Radiotherapy-Dose-Planning
 huggingface_space: https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Dose-Planning
-docker_image: ghcr.io/yourname/radiotherapy-env:latest
+docker_image: ghcr.io/vaishnaviagrawal03/radiotherapy-env:latest
 
 # ── Task Definitions ──────────────────────────────────────────────────────────
 tasks:
@@ -163,7 +163,7 @@ baseline:
 # ── Setup ─────────────────────────────────────────────────────────────────────
 installation:
   pip: "pip install radiotherapy-env"
-  docker: "docker pull ghcr.io/yourname/radiotherapy-env:latest"
+  docker: "docker pull ghcr.io/vaishnaviagrawal03/radiotherapy-env:latest"
 
 quick_start: |
   import gymnasium as gym
