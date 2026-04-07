@@ -164,6 +164,9 @@ def api_state():
 def health():
     return {"status": "ok"}
 
+@app.get("/")
+def root():
+    return {"message": "Radiotherapy API is running"}
 
 # ── Entry Point ───────────────────────────────────────────────────────────────
 def main():
