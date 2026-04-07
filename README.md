@@ -91,6 +91,23 @@ reward = tumor_coverage × 0.50
 
 ---
 
+## Physics Model
+
+Gaussian pencil-beam dose calculation:
+
+```
+beam_dose = lateral_profile x depth_attenuation x dose_weight x BEAM_SCALE
+```
+
+- **Lateral profile**: Gaussian falloff from beam central axis
+- **Depth attenuation**: Exponential decay through tissue (Beer-Lambert Law)
+- **Beam superposition**: Total dose = sum of all beam contributions
+- **Isocenter convergence**: All beams aimed at tumor center
+
+Simplified from clinical Monte Carlo (milliseconds vs hours) but preserves the core trade-off: multiple beams overlap at tumor for high dose while surrounding organs receive minimal radiation.
+
+---
+
 ## Quick Start
 
 ```bash
@@ -159,6 +176,33 @@ python baseline/evaluate.py
 | Head & Neck | 0.750 | 0.059 | 96.7% | 350K |
 | Pediatric Brain | 0.717 | 0.090 | 95.0% | 1M |
 | **Aggregate** | **0.721** | — | — | — |
+
+**LLM Agent** (Llama 3.3 70B via inference.py):
+
+| Task | Mean Score | Episodes |
+|------|-----------|----------|
+| Prostate | 0.540 | 3 |
+| Head & Neck | 0.560 | 3 |
+| Pediatric Brain | 0.523 | 3 |
+| **Aggregate** | **0.541** | — |
+
+---
+
+## Auto-Grader
+
+```python
+from radiotherapy_env.reward.grader import grade_all
+
+def my_agent(obs, env):
+    return env.action_space.sample()
+
+results = grade_all(my_agent, n_episodes=20, seed=42)
+print(f"Aggregate: {results['aggregate_score']:.3f}")
+```
+
+Each grader produces scores in `[0.0, 1.0]`, deterministic with seed, pass threshold at 0.60.
+
+---
 
 ## Run Tests
 
