@@ -174,9 +174,7 @@ except Exception as e:
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 def main():
-    port = int(os.getenv("PORT", 7860))
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
-
+    uvicorn.run(app, host="0.0.0.0", port=7860, log_level="info")
 
 if __name__ == "__main__":
     main()
