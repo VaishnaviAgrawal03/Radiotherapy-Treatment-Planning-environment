@@ -15,8 +15,8 @@ authors:
     email: "vagrawal_be22@thapar.edu"
 
 
-repository: https://github.com/VaishnaviAgrawal03/Radiotherapy-Dose-Planning
-huggingface_space: https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Dose-Planning
+repository: https://github.com/VaishnaviAgrawal03/Radiotherapy-Treatment-Planning-environment
+huggingface_space: https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy-Treatment-Planning-environment
 docker_image: ghcr.io/vaishnaviagrawal03/radiotherapy-env:latest
 
 # ── Task Definitions ──────────────────────────────────────────────────────────
