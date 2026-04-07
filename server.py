@@ -157,7 +157,7 @@ def health():
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "app"))
     from app import demo  # the gr.Blocks() instance
-    app = gr.mount_gradio_app(app, demo, path="/")
+    app = gr.mount_gradio_app(app, demo, path="/ui")
     print("Gradio UI mounted at /ui", flush=True)
 except Exception as e:
     print(f"[WARN] Could not mount Gradio UI: {e}", flush=True)
