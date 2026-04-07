@@ -216,7 +216,12 @@ radiotherapy-env/
 ├── tests/
 │   └── test_env.py             ← Full test suite
 ├── app/
-│   └── app.py                  ← Gradio HuggingFace demo
+│   └── app.py                  ← Gradio UI components
+├── server/
+│   └── app.py                  ← Server logic
+├── server.py                   ← Docker entry point (Gradio demo)
+├── app.py                      ← Standalone demo
+├── inference.py                ← Inference script
 ├── openenv.yaml                ← OpenEnv spec metadata
 ├── Dockerfile
 ├── requirements.txt
