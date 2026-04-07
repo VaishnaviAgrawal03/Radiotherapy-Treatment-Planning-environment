@@ -194,7 +194,7 @@ Output follows the required `[START]`, `[STEP]`, `[END]` format:
 
 ---
 
-### Baseline Results (PPO, stable-baselines3)
+## Baseline Results (PPO, stable-baselines3)
 
 | Task | Mean Score | Std | Pass Rate | Training Steps |
 |------|-----------|-----|-----------|---------------|
