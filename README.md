@@ -15,6 +15,8 @@ tags:
 # RadiotherapyPlanningEnv — OpenEnv RL Environment
 
 > **An OpenEnv-compatible RL environment for cancer radiotherapy treatment planning.**
+> OpenEnv spec: [`openenv.yaml`](openenv.yaml)
+
 
 An RL environment where an AI agent learns to plan cancer radiotherapy treatment. The agent places radiation beams to maximize tumor dose while protecting surrounding organs-at-risk (OARs) — a real clinical problem that takes human experts **2-4 hours per patient**.
 
