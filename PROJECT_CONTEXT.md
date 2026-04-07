@@ -9,7 +9,6 @@
 
 **Version**: 1.0.0   
 **Python requirement**: >=3.9  
-**OpenEnv spec**: https://github.com/openenv/openenv
 **Author:** Vaishnavi Agrawal (vagrawal_be22@thapar.edu)
 
 ---
